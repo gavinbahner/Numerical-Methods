@@ -25,7 +25,7 @@ def kmodel(c):
      return ((1/a0)*(c**2))/(a1/a0 + (c**2))
 
 axs[1].plot(c,k,'o',cm,kmodel(cm),'-')
-axs[1].set_title('x vs. y with Known Model')
+axs[1].set_title('c vs. k with Known Model')
 axs[1].set_xlabel('c [mg/L]')
 axs[1].set_ylabel('k')
 axs[1].set_xlim(0,5)

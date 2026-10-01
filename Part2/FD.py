@@ -25,14 +25,20 @@ for i in range(N.shape[0]):
     if i>0:
         N[i,i-1] = 1
     N[i,i] = - 2 - 0.15*(dx**2)
-    if i<8:
+    if i<9:
         N[i,i+1] = 1
 N[0,1] = 2
-print(N)
 tN = np.zeros(10)
 tN[0] = 0
 tN[-1] = -150
-NFinal = np.linalg.solve(N,tN)
+N = np.linalg.solve(N,tN)
+NFinal = np.concatenate((N,[150]))
+
+print("Matrix,A")
+print(N)
+print("b")
+print(tN)
+print("Solution, x")
 print(NFinal)
 
 def T(x):
@@ -48,14 +54,14 @@ ax[0].set_xlim(0,10)
 ax[0].set_ylim(45,250)
 ax[0].legend()
 
-ax[1].plot(x,TFinal,'o',zorder=1,label='2nd Order FD Approximation')
-ax[1].plot(xt,Ttrue,'-',zorder=-1,label='Analytical Solution')
+ax[1].plot(x,NFinal,'o',zorder=1,label='2nd Order FD Approximation')
+# ax[1].plot(xt,Ttrue,'-',zorder=-1,label='Analytical Solution')
 ax[1].set_title("Temperature dist. with Insulated BC: T'(0) = 0, T(10) = 150",fontsize=9,style='oblique')
 ax[1].set_xlim(0,10)
-ax[1].set_ylim(45,250)
+ax[1].set_ylim(0,250)
 ax[1].legend()
 
-# plt.show()
+plt.show()
 
  
 
