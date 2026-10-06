@@ -17,6 +17,7 @@ a = 1
 b = 1
 w = 1
 windU = -a*t
+print(type(windU))
 windV = b*np.sin(w*t)
 windMag = (windU**2+windV**2)**0.5 #Elementise Magnitude
 
@@ -34,11 +35,13 @@ CD = CD(Re)
 
 def fxD(i,vx,D):
     p = 1.225
-    CD[i]*(np.pi/8)*p*(D**2)*((windU[i]-vx)**2)
+    F = CD[i]*(np.pi/8)*p*(D**2)*((windU[i]-vx)**2)
+    return F
 
 def fyD(i,vy,D):
     p = 1.225
-    CD[i]*(np.pi/8)*p*(D**2)*((windV[i]-vy)**2)
+    F = CD[i]*(np.pi/8)*p*(D**2)*((windV[i]-vy)**2)
+    return F
 
 FSb = np.zeros((nb,s))
 FSa = np.zeros((nb,s))
@@ -46,24 +49,46 @@ FDb = np.zeros((nb,s))
 FDa = np.zeros((nb,s))
 kS = 20
 kD = 20
-for j in range(2,s-1):
-    for i in range(2,nb-1):
-        [xb,yb] = [x[i,0,j] - x[i-1,0,j],x[i,1,j] - x[i-1,1,j]]
-        [xa,ya] = [x[i,0,j] - x[i+1,0,j],x[i,1,j] - x[i+1,1,j]]
-        a1 = np.arctan(yb/xb)
-        a2 = np.arctan(ya/xa)
-        [vxb,vyb] = [v[i,0,j] - v[i-1,0,j],v[i,1,j] - v[i-1,1,j]]
-        [vxa,vya] = [v[i,0,j] - v[i+1,0,j],v[i,1,j] - v[i+1,1,j]]
-        a3 = np.arctan(vyb/vxb)
-        a4 = np.arctan(vya/vxa)
+for j in range(1,s-1): #Time For Loop
+    for i in range(1,nb-1): #Particle Left to Right For Loop
+        xb = x[i,0,j] - x[i-1,0,j]
+        yb = x[i,1,j] - x[i-1,1,j]
+        xa = x[i,0,j] - x[i+1,0,j]
+        ya = x[i,1,j] - x[i+1,1,j]
+        
+        if xb == 0:
+            a1 = 0
+        else:
+            a1 = np.arctan(yb/xb)
+        if xa == 0:
+            a2 = 0
+        else:
+            a2 = np.arctan(ya/xa)
 
-        FSb[i,j] = -1*kS* (np.sqrt( (xb)^2 + (yb)^2 ) - lr)
-        FSa[i,j] = -1*kS* (np.sqrt( (xa)^2 + (ya)^2 ) - lr)
-        FDb[i,j] = -1*kD* (np.sqrt( (vxb)^2 + (vyb)^2 ))
-        FDa[i,j] = -1*kD* (np.sqrt( (vxa)^2 + (vya)^2 ))
+        vxb  = v[i,0,j] - v[i-1,0,j]
+        vyb = v[i,1,j] - v[i-1,1,j]
+        vxa = v[i,0,j] - v[i+1,0,j]
+        vya = v[i,1,j] - v[i+1,1,j]
+        if vxb == 0:
+            a3 = 0
+        else:
+            a3 = np.arctan(vyb/vxb)
+        if vxa == 0:
+            a4 = 0
+        else:
+            a4 = np.arctan(vya/vxa)
 
+        FSb[i,j] = -1*kS* (np.sqrt( (xb)**2 + (yb)**2 ) - lr)
+        FSa[i,j] = -1*kS* (np.sqrt( (xa)**2 + (ya)**2 ) - lr)
+        FDb[i,j] = -1*kD* (np.sqrt( (vxb)**2 + (vyb)**2 ))
+        FDa[i,j] = -1*kD* (np.sqrt( (vxa)**2 + (vya)**2 ))
+   
         x[i,0,j+1] = x[i,0,j] + v[i,0,j]*dt
-        v[i,0,j+1] = fxD(j,v[i,0,j],D) + FSb(i,j)*np.cos(a1) + FDb(i,j)*np.cos(a3)
+        v[i,0,j+1] = FSb[i,j]*np.cos(a1) + FDb[i,j]*np.cos(a3) + fxD(j,v[i,0,j],D)
         x[i,1,j+1] = x[i,1,j] + v[i,1,j]*dt
-        v[i,1,j+1] = fyD(j,v[i,1,j],D) + FSb(i,j)*np.sin(a2) + FDb(i,j)*np.sin(a4)
+        v[i,1,j+1] = FSb[i,j]*np.sin(a2) + FDb[i,j]*np.sin(a4) + fyD(j,v[i,1,j],D)
     
+print(x)
+
+plt.plot(x[:,0,1],x[:,1,1])
+plt.show()
