@@ -22,6 +22,7 @@ def polyRegression(x,y,o):
 
 
 cubic = polyRegression(x,y,3)
+print(cubic)
 quartic = polyRegression(x,y,4)
 fifth = polyRegression(x,y,5)
 tenth = polyRegression(x,y,8)

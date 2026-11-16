@@ -8,8 +8,10 @@ t = np.linspace(start=tS,stop=tF,num=s+1)
 dt = t[1] - t[0]
 
 nb = 5 #Number of Beads
-lr = 0.08 #Unstretched Distance Between Beads
-D = lr * nb #Length of Bead Chain
+d= 0.001 #Diameter of Beads
+L = 0.2 #Length of Unstretched Bead Chain
+lr = (L - nb*d)/nb
+#Length of Bead Chain
 x = np.zeros((nb,2,s))
 v = np.zeros((nb,2,s))
 

@@ -64,7 +64,7 @@ axs[1,1].set_ylabel('y')
 
 
 a = polyRegression(x,y)
-
+print(a)
 R3y = a[0] + a[1]*xm + a[2]*(xm**2)
 axs[2,1].plot(x,y,'o',xm,R3y,'-')
 axs[2,1].set_title('Parabolic Regression')
